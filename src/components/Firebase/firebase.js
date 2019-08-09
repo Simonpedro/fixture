@@ -57,6 +57,16 @@ class Firebase {
     const snapshot = await this.db.collection(TEAM_COLLECTION).get()
     return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
   }
+
+  async addTeam(newTeam) {
+    const ref = await this.db.collection(TEAM_COLLECTION).add(newTeam)
+    return ref.id
+  }
+
+  async fetchAllUsers() {
+    const snapshot = await this.db.collection(USER_COLLECTION).get()
+    return snapshot.docs.map(doc => doc.data());
+  }
 }
 
 export default Firebase;
