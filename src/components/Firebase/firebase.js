@@ -1,6 +1,6 @@
-import app from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
+import app from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -9,11 +9,12 @@ const config = {
   projectId: process.env.REACT_APP_PROJECT_ID,
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_ID
+  appId: process.env.REACT_APP_ID,
 };
 
-const USER_COLLECTION = 'user';
-const TEAM_COLLECTION = 'team';
+const USER_COLLECTION = "user";
+const TEAM_COLLECTION = "team";
+const TOURNAMENT_COLLECTION = "tournament";
 
 class Firebase {
   constructor() {
@@ -28,7 +29,7 @@ class Firebase {
     const { user } = await this.auth.signInWithPopup(this.provider);
 
     if (!user) {
-      return { error: 'There was an error in the login proccess.' };
+      return { error: "There was an error in the login proccess." };
     }
 
     await this.db
@@ -48,14 +49,21 @@ class Firebase {
   onInitialize(callback) {
     this.auth.onAuthStateChanged(callback);
   }
-  
+
   logout() {
     return this.auth.signOut();
   }
 
   async fetchAllTeams() {
-    const snapshot = await this.db.collection(TEAM_COLLECTION).get()
+    const snapshot = await this.db.collection(TEAM_COLLECTION).get();
     return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+  }
+
+  async saveTournament(tournament) {
+    const result = await this.db
+      .collection(TOURNAMENT_COLLECTION)
+      .add(tournament);
+    return result;
   }
 }
 
